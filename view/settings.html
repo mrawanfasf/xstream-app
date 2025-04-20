@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan Stream</title>
+    <link rel="stylesheet" href="../public/styles.css">
+</head>
+<body>
+    <div class="settings-container">
+        <h2>Pengaturan Stream</h2>
+        <form id="settings-form">
+            <div class="form-group">
+                <label for="stream-url">URL Stream</label>
+                <input type="text" id="stream-url" name="streamUrl" placeholder="Masukkan URL stream" required>
+            </div>
+
+            <div class="form-group">
+                <label for="resolution">Resolusi</label>
+                <select id="resolution" name="resolution" required>
+                    <option value="720p">720p</option>
+                    <option value="1080p">1080p</option>
+                    <option value="1440p">1440p</option>
+                    <option value="2160p">2160p</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fps">FPS</label>
+                <input type="number" id="fps" name="fps" placeholder="Masukkan FPS" required>
+            </div>
+
+            <div class="form-group">
+                <label for="bitrate">Bitrate</label>
+                <input type="number" id="bitrate" name="bitrate" placeholder="Masukkan bitrate (kbps)" required>
+            </div>
+
+            <button type="submit">Simpan Pengaturan</button>
+        </form>
+
+        <div class="buttons">
+            <button onclick="window.location.href = '/gallery.html';">Kembali ke Galeri</button>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk menyimpan pengaturan stream
+        async function saveSettings(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const settings = {
+                streamUrl: formData.get('streamUrl'),
+                resolution: formData.get('resolution'),
+                fps: formData.get('fps'),
+                bitrate: formData.get('bitrate')
+            };
+
+            try {
+                const response = await fetch('/api/save-settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Pengaturan berhasil disimpan!');
+                } else {
+                    alert('Gagal menyimpan pengaturan.');
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Gagal menyimpan pengaturan.');
+            }
+        }
+
+        // Daftarkan form submit untuk menyimpan pengaturan
+        document.getElementById('settings-form').addEventListener('submit', saveSettings);
+    </script>
+</body>
+</html>

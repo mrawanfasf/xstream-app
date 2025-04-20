@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Video</title>
+    <link rel="stylesheet" href="../public/styles.css">
+</head>
+<body>
+    <div class="gallery-container">
+        <h2>Galeri Video</h2>
+
+        <div id="video-gallery">
+            <!-- Video gallery akan dimuat di sini -->
+        </div>
+
+        <div class="buttons">
+            <button onclick="loadHistory()">Lihat Riwayat Streaming</button>
+            <button onclick="window.location.href = '/setup.html';">Pengaturan Stream</button>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk mengambil daftar video dari server
+        async function loadGallery() {
+            try {
+                const response = await fetch('/api/get-gallery');
+                const data = await response.json();
+
+                if (data.success) {
+                    const galleryContainer = document.getElementById('video-gallery');
+                    galleryContainer.innerHTML = '';
+
+                    data.videos.forEach(video => {
+                        const videoElement = document.createElement('div');
+                        videoElement.classList.add('video-item');
+
+                        const videoLink = document.createElement('a');
+                        videoLink.href = `/stream/${video.filename}`;
+                        videoLink.textContent = video.filename;
+
+                        videoElement.appendChild(videoLink);
+                        galleryContainer.appendChild(videoElement);
+                    });
+                } else {
+                    alert('Tidak ada video yang ditemukan.');
+                }
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+                alert('Gagal memuat galeri.');
+            }
+        }
+
+        // Fungsi untuk memuat riwayat streaming
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/get-history');
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Riwayat streaming: ' + JSON.stringify(data.history, null, 2));
+                } else {
+                    alert('Tidak ada riwayat streaming.');
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                alert('Gagal memuat riwayat.');
+            }
+        }
+
+        // Muat galeri saat halaman dimuat
+        window.onload = loadGallery;
+    </script>
+</body>
+</html>

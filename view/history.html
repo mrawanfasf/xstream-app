@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Streaming</title>
+    <link rel="stylesheet" href="../public/styles.css">
+</head>
+<body>
+    <div class="history-container">
+        <h2>Riwayat Streaming</h2>
+
+        <table id="history-table">
+            <thead>
+                <tr>
+                    <th>Nama Video</th>
+                    <th>URL Stream</th>
+                    <th>Mulai</th>
+                    <th>Selesai</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Riwayat streaming akan dimuat di sini -->
+            </tbody>
+        </table>
+
+        <div class="buttons">
+            <button onclick="window.location.href = '/gallery.html';">Kembali ke Galeri</button>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk memuat riwayat streaming
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/get-history');
+                const data = await response.json();
+
+                if (data.success) {
+                    const historyTableBody = document.querySelector('#history-table tbody');
+                    historyTableBody.innerHTML = '';
+
+                    data.history.forEach(record => {
+                        const row = document.createElement('tr');
+
+                        const filenameCell = document.createElement('td');
+                        filenameCell.textContent = record.filename;
+                        row.appendChild(filenameCell);
+
+                        const streamUrlCell = document.createElement('td');
+                        streamUrlCell.textContent = record.stream_url;
+                        row.appendChild(streamUrlCell);
+
+                        const startTimeCell = document.createElement('td');
+                        startTimeCell.textContent = record.started_at;
+                        row.appendChild(startTimeCell);
+
+                        const endTimeCell = document.createElement('td');
+                        endTimeCell.textContent = record.ended_at;
+                        row.appendChild(endTimeCell);
+
+                        historyTableBody.appendChild(row);
+                    });
+                } else {
+                    alert('Tidak ada riwayat streaming.');
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                alert('Gagal memuat riwayat.');
+            }
+        }
+
+        // Muat riwayat streaming saat halaman dimuat
+        window.onload = loadHistory;
+    </script>
+</body>
+</html>

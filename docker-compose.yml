@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  xstream-app:
+    build: .
+    container_name: xstream-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src/uploads:/app/src/uploads   # Folder hasil download video
+    restart: unless-stopped
